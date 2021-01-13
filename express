@@ -1,0 +1,46 @@
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+
+
+
+
+dotenv.config();
+const app = express();
+app.set('port',process.env.PORT || 3000);
+
+//app.set('/views',express.static(path.join(__dirname,'/views')));
+app.set('views', path.join(__dirname + '/views'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
+
+
+const indexRouter = require('./router');
+const loginRouter = require('./router/form.js');
+app.use(morgan('dev'));
+
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
+    resave : false,
+    saveUninitialized : false,
+    secret : process.env.COOKIE_SECRET,
+    cookie : {
+        httpOnly : true,
+        secure : false,
+    },
+    name : 'session-cookie',
+}));
+
+app.use('/',indexRouter);
+app.use('/',loginRouter);
+app.listen(app.get('port'),() => {
+    console.log(`${app.get('port')} 번 포트에서 대기 중....`);
+});
+
