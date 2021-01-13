@@ -1,0 +1,4 @@
+html을 사용하기 위해서 아래와 같은 설정이 필요하다
+app.set('views', path.join(__dirname + '/views'));
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
